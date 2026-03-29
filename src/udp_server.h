@@ -21,10 +21,12 @@ typedef struct {
     size_t message_len;
 } Client;
 
-typedef struct {
+typedef struct udp_server_t UDPServer;
+
+typedef struct udp_server_t {
     int port;
     void *this;
-    void (*on_message_received)(void *this, Client client);
+    void (*on_message_received)(UDPServer *server, Client client, void* this);
 
     int fd;
     struct sockaddr_in addr;
@@ -87,7 +89,7 @@ bool udp_server_listen(UDPServer *server) {
                addrstr, ntohs(client.addr.sin_port));
 
         if (server->on_message_received) {
-            server->on_message_received(server->this, client);
+            server->on_message_received(server, client, server->this);
         }
     }
 
